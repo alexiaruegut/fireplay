@@ -53,7 +53,8 @@ export default function HomePage() {
               Welcome to Fireplay
             </h1>
             <p className="text-xl text-gray-300 mb-8">
-            Discover a universe of games. Play, explore, and conquer with Fireplay.
+              Discover a universe of games. Play, explore, and conquer with
+              Fireplay.
             </p>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -74,7 +75,7 @@ export default function HomePage() {
                         d="M8 18.392V5.608L18.226 12zM6 3.804v16.392a1 1 0 0 0 1.53.848l13.113-8.196a1 1 0 0 0 0-1.696L7.53 2.956A1 1 0 0 0 6 3.804"
                       />
                     </svg>
-                    Explorar Juegos
+                    Discover Games
                   </span>
                 </span>
               </a>
@@ -97,19 +98,19 @@ export default function HomePage() {
 
           <div className="relative z-10">
             <h2 className="text-3xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
-              ¿Qué es Fireplay?
+              What is Fireplay?
             </h2>
             <p className="text-gray-300 mb-4">
-              Fireplay es una plataforma moderna para comprar videojuegos de
-              todo tipo: acción, aventura, estrategia y mucho más. Explora
-              nuestro catálogo y guarda tus favoritos.
+              Fireplay is your next-generation platform to discover and buy the
+              best games — from action and adventure to strategy and beyond.
+              Explore our catalog and save your favorites.
             </p>
             <div className="flex justify-center gap-4">
               <a
                 href="/info"
                 className="text-purple-400 hover:text-purple-300 transition-colors flex items-center"
               >
-                <span>Más información</span>
+                <span>More Information</span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-4 w-4 ml-1"
@@ -128,7 +129,7 @@ export default function HomePage() {
                 href="/contact"
                 className="text-pink-400 hover:text-pink-300 transition-colors flex items-center"
               >
-                <span>Contacto</span>
+                <span>Contact Us</span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-4 w-4 ml-1"
@@ -157,29 +158,14 @@ export default function HomePage() {
             transition={{ duration: 0.6 }}
             className="text-3xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 flex items-center justify-center"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-8 w-8 mr-2 text-purple-400"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M18 8a3 3 0 0 0-3-3h-4a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h4a3 3 0 0 0 3-3z" />
-              <circle cx="12" cy="12" r="1" />
-              <path d="M12 17v-2" />
-              <path d="M9 9h6" />
-            </svg>
-            <span>¿Cómo funciona Fireplay?</span>
+            <span>How Fireplay Works</span>
           </motion.h2>
 
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
-                title: "1. Explora",
-                description: "Navega por cientos de videojuegos disponibles.",
+                title: "1. Explore",
+                description: "Browse hundreds of available games and discover new favorites.",
                 delay: 0.3,
                 gradient: "from-blue-500 to-indigo-600",
                 bgColor: "bg-zinc-700/50",
@@ -198,9 +184,9 @@ export default function HomePage() {
                 ),
               },
               {
-                title: "2. Guarda tus favoritos",
+                title: "2. Save Your Favorites",
                 description:
-                  "Añade juegos a tu lista de deseos o a tu carrito.",
+                  "Add games to your wishlist or cart for easy access later.",
                 delay: 0.5,
                 gradient: "from-purple-500 to-indigo-600",
                 bgColor: "bg-zinc-700/50",
@@ -219,8 +205,8 @@ export default function HomePage() {
                 ),
               },
               {
-                title: "3. Disfruta",
-                description: "Compra tus juegos favoritos y empieza a jugar.",
+                title: "3. Enjoy",
+                description: "Purchase your favorite games and dive into new adventures.",
                 delay: 0.7,
                 gradient: "from-pink-500 to-purple-600",
                 bgColor: "bg-zinc-700/50",
@@ -285,7 +271,7 @@ export default function HomePage() {
 
         <div className="backdrop-blur-md bg-zinc-800/50 p-8 rounded-3xl border border-zinc-700/50 shadow-xl max-w-2xl mx-auto relative z-10">
           <h2 className="text-3xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
-            ¿Listo para jugar?
+          Ready to Play?
           </h2>
           <a href="/games" className="relative inline-block group">
             <span className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full blur-sm opacity-75 group-hover:opacity-100 transition-opacity"></span>
@@ -301,7 +287,7 @@ export default function HomePage() {
                     d="M8 18.392V5.608L18.226 12zM6 3.804v16.392a1 1 0 0 0 1.53.848l13.113-8.196a1 1 0 0 0 0-1.696L7.53 2.956A1 1 0 0 0 6 3.804"
                   />
                 </svg>
-                Explorar Juegos
+                Explore Games
               </span>
             </span>
           </a>

@@ -1,22 +1,15 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+"use client";
+
+// import type { Metadata } from "next";
 import "./globals.css";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { auth } from "@/lib/firebase";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-export const metadata: Metadata = {
-  title: "FirePlay",
-  description: "Your new online videogame store",
-};
+// export const metadata: Metadata = {
+//   title: "FirePlay",
+//   description: "Your new online videogame store",
+// };
 
 export default function RootLayout({
   children,
@@ -35,6 +28,15 @@ export default function RootLayout({
 }
 
 function Header() {
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setUser(user);
+    });
+    return () => unsubscribe();
+  }, []);
+
   return (
     <header className="fixed top-0 w-full z-50 transition-all duration-300 bg-zinc-900/50 backdrop-blur-md shadow-lg">
       <div className="container mx-auto flex items-center justify-between p-4">
@@ -59,10 +61,8 @@ function Header() {
 
         <nav className="hidden md:flex items-center space-x-6">
           {[
-            { name: "Inicio", href: "/" },
-            { name: "Juegos", href: "/games" },
-            { name: "Login", href: "/login" },
-            { name: "Registro", href: "/register" },
+            { name: "Home", href: "/" },
+            { name: "Games", href: "/games" },
           ].map((item, index) => (
             <Link
               key={index}
@@ -73,6 +73,24 @@ function Header() {
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-500 to-pink-500 group-hover:w-full transition-all duration-300"></span>
             </Link>
           ))}
+
+          {/* Icono Usuario */}
+          <Link
+            href={user ? "/dashboard" : "/login"}
+            className="text-gray-300 hover:text-white transition-colors relative group"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              viewBox="0 0 24 24"
+            >
+              <g fill="none" stroke="currentColor" strokeWidth="1.5">
+                <circle cx="12" cy="6" r="4" />
+                <path d="M20 17.5c0 2.485 0 4.5-8 4.5s-8-2.015-8-4.5S7.582 13 12 13s8 2.015 8 4.5Z" />
+              </g>
+            </svg>
+            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-500 to-pink-500 group-hover:w-full transition-all duration-300"></span>
+          </Link>
         </nav>
 
         {/* Mobile menu button */}
@@ -104,17 +122,17 @@ function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="flex items-center mb-4 md:mb-0">
             <div className="inline-flex items-center justify-center w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg transform rotate-6 shadow-md mr-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-            >
-              <path
-                fill="currentColor"
-                d="M12 2a9.98 9.98 0 0 1 7.743 3.671L13.414 12l6.329 6.329A9.98 9.98 0 0 1 12 22C6.477 22 2 17.523 2 12S6.477 2 12 2m0 2a8 8 0 1 0 4.697 14.477l.208-.157l-6.32-6.32l6.32-6.321l-.208-.156a7.97 7.97 0 0 0-4.394-1.517zm0 1a1.5 1.5 0 1 1 0 3a1.5 1.5 0 0 1 0-3"
-              />
-            </svg>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  fill="currentColor"
+                  d="M12 2a9.98 9.98 0 0 1 7.743 3.671L13.414 12l6.329 6.329A9.98 9.98 0 0 1 12 22C6.477 22 2 17.523 2 12S6.477 2 12 2m0 2a8 8 0 1 0 4.697 14.477l.208-.157l-6.32-6.32l6.32-6.321l-.208-.156a7.97 7.97 0 0 0-4.394-1.517zm0 1a1.5 1.5 0 1 1 0 3a1.5 1.5 0 0 1 0-3"
+                />
+              </svg>
             </div>
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 font-bold">
               Fireplay
@@ -160,12 +178,12 @@ function Footer() {
             <h3 className="text-white font-medium mb-3">Navegación</h3>
             <ul className="space-y-2">
               <li>
-                <a
+                <Link
                   href="/"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
                   Inicio
-                </a>
+                </Link>
               </li>
               <li>
                 <a
