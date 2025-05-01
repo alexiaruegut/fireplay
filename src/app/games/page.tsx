@@ -75,9 +75,9 @@ export default function GamesPage() {
 
   const toggleFavorite = (gameId: number, event: React.MouseEvent) => {
     event.preventDefault();
-    setFavorites(prev =>
+    setFavorites((prev) =>
       prev.includes(gameId)
-        ? prev.filter(id => id !== gameId)
+        ? prev.filter((id) => id !== gameId)
         : [...prev, gameId]
     );
   };
@@ -104,7 +104,8 @@ export default function GamesPage() {
               <Listbox.Option
                 value={null}
                 className={({ active }) =>
-                  `relative cursor-pointer select-none py-2 pl-10 pr-4 ${active ? "bg-purple-500/20 text-white" : "text-gray-300"
+                  `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
+                    active ? "bg-purple-500/20 text-white" : "text-gray-300"
                   }`
                 }
               >
@@ -115,7 +116,8 @@ export default function GamesPage() {
                   key={genre.id}
                   value={genre}
                   className={({ active }) =>
-                    `relative cursor-pointer select-none py-2 pl-10 pr-4 ${active ? "bg-purple-500/20 text-white" : "text-gray-300"
+                    `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
+                      active ? "bg-purple-500/20 text-white" : "text-gray-300"
                     }`
                   }
                 >
@@ -164,26 +166,68 @@ export default function GamesPage() {
                   ))}
                 </div>
 
-                <div className="flex justify-between">
+                <div className="flex justify-between items-center">
                   <div className="flex">
-                    <button onClick={(e) => toggleFavorite(game.id, e)} className="w-10 h-10 flex items-center justify-center rounded-full cursor-pointer hover:bg-zinc-700/50">
+                    <button
+                      onClick={(e) => toggleFavorite(game.id, e)}
+                      className="w-10 h-10 flex items-center justify-center rounded-full cursor-pointer hover:bg-zinc-700/50"
+                    >
                       {favorites.includes(game.id) ? (
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                          <path fill="pink" d="m12.82 5.58l-.82.822l-.824-.824a5.375 5.375 0 1 0-7.601 7.602l7.895 7.895a.75.75 0 0 0 1.06 0l7.902-7.897a5.376 5.376 0 0 0-.001-7.599a5.38 5.38 0 0 0-7.611 0" />
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            fill="#E272DA"
+                            d="m12.82 5.58l-.82.822l-.824-.824a5.375 5.375 0 1 0-7.601 7.602l7.895 7.895a.75.75 0 0 0 1.06 0l7.902-7.897a5.376 5.376 0 0 0-.001-7.599a5.38 5.38 0 0 0-7.611 0"
+                          />
                         </svg>
                       ) : (
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 20 20">
-                          <path fill="pink" d="m10.497 16.803l6.244-6.304a4.41 4.41 0 0 0-.017-6.187a4.306 4.306 0 0 0-6.135-.015l-.596.603l-.605-.61l-.1-.099a4.3 4.3 0 0 0-6.027.083c-1.688 1.705-1.68 4.476.016 6.189l6.277 6.34c.26.263.682.263.942 0M11.3 5a3.306 3.306 0 0 1 4.713.016a3.41 3.41 0 0 1 .016 4.78v.002l-6.004 6.06l-6.038-6.099c-1.313-1.326-1.314-3.47-.015-4.782a3.3 3.3 0 0 1 4.706.016l.96.97a.5.5 0 0 0 .711 0z" />
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fill="#E272DA"
+                            d="m10.497 16.803l6.244-6.304a4.41 4.41 0 0 0-.017-6.187a4.306 4.306 0 0 0-6.135-.015l-.596.603l-.605-.61l-.1-.099a4.3 4.3 0 0 0-6.027.083c-1.688 1.705-1.68 4.476.016 6.189l6.277 6.34c.26.263.682.263.942 0M11.3 5a3.306 3.306 0 0 1 4.713.016a3.41 3.41 0 0 1 .016 4.78v.002l-6.004 6.06l-6.038-6.099c-1.313-1.326-1.314-3.47-.015-4.782a3.3 3.3 0 0 1 4.706.016l.96.97a.5.5 0 0 0 .711 0z"
+                          />
                         </svg>
                       )}
                     </button>
                   </div>
                   <div className="flex justify-center gap-1 text-yellow-400">
                     {Array.from({ length: 5 }, (_, i) => (
-                      <span key={i}>{i < Math.round(game.rating) ? "★" : "☆"}</span>
+                      <span key={i}>
+                        {i < Math.round(game.rating) ? "★" : "☆"}
+                      </span>
                     ))}
                   </div>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path fill="currentColor" d="M19.5 22a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3m-10 0a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3" /><path d="M5 4h17l-2 11H7zm0 0c-.167-.667-1-2-3-2m18 13H5.23c-1.784 0-2.73.781-2.73 2s.946 2 2.73 2H19.5" /></g></svg>
+                  <div className="w-10 h-10 flex items-center justify-center rounded-full cursor-pointer hover:bg-zinc-700/50">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="22"
+                      height="22"
+                      viewBox="0 0 24 24"
+                    >
+                      <g
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="1.5"
+                      >
+                        <path
+                          fill="currentColor"
+                          d="M19.5 22a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3m-10 0a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3"
+                        />
+                        <path d="M5 4h17l-2 11H7zm0 0c-.167-.667-1-2-3-2m18 13H5.23c-1.784 0-2.73.781-2.73 2s.946 2 2.73 2H19.5" />
+                      </g>
+                    </svg>
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -227,10 +271,11 @@ export default function GamesPage() {
               key={page}
               onClick={() => handlePageChange(page)}
               disabled={page === currentPage}
-              className={`w-10 h-10 flex items-center justify-center rounded-full text-sm font-bold transition-all ${page === currentPage
-                ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white"
-                : "bg-zinc-700/50 hover:bg-zinc-600 text-gray-300"
-                }`}
+              className={`w-10 h-10 flex items-center justify-center rounded-full text-sm font-bold transition-all ${
+                page === currentPage
+                  ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white"
+                  : "bg-zinc-700/50 hover:bg-zinc-600 text-gray-300"
+              }`}
             >
               {page}
             </button>
