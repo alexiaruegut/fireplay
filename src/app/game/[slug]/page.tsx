@@ -3,8 +3,12 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
+import { auth, db } from "@/lib/firebase";
+import { doc, getDoc, setDoc, deleteDoc } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 
 interface GameDetail {
+  id: number;
   name: string;
   description_raw: string;
   background_image: string;
@@ -12,6 +16,23 @@ interface GameDetail {
   rating: number;
   genres: { name: string }[];
   slug: string;
+  platforms: {
+    platform: { name: string };
+    requirements?: {
+      minimum?: string;
+      recommended?: string;
+    };
+  }[];
+}
+
+interface Review {
+  id: string;
+  text: string;
+  user: {
+    username: string;
+  };
+  created: string;
+  rating: number | null;
 }
 
 export default function GameDetailPage() {
@@ -20,6 +41,8 @@ export default function GameDetailPage() {
   const [loading, setLoading] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
   const [randomPrice, setRandomPrice] = useState<number | null>(null);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [reviewsLoading, setReviewsLoading] = useState(true);
 
   useEffect(() => {
     const fetchGameDetail = async () => {
@@ -32,6 +55,20 @@ export default function GameDetailPage() {
         setGame(data);
         const random = Math.floor(Math.random() * (80 - 30 + 1)) + 30;
         setRandomPrice(random);
+
+        onAuthStateChanged(auth, async (user) => {
+          if (user) {
+            const favRef = doc(
+              db,
+              "users",
+              user.uid,
+              "favorites",
+              data.id.toString()
+            );
+            const favSnap = await getDoc(favRef);
+            setIsFavorite(favSnap.exists());
+          }
+        });
       } catch (error) {
         console.error("Error fetching game detail:", error);
       } finally {
@@ -41,6 +78,56 @@ export default function GameDetailPage() {
 
     if (slug) fetchGameDetail();
   }, [slug]);
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const res = await fetch(
+          `https://api.rawg.io/api/games/${slug}/reviews?key=${process.env.NEXT_PUBLIC_RAWG_API_KEY}`
+        );
+        const data = await res.json();
+        setReviews(data.results || []);
+      } catch (error) {
+        console.error("Error fetching reviews:", error);
+      } finally {
+        setReviewsLoading(false);
+      }
+    };
+
+    if (slug) fetchReviews();
+  }, [slug]);
+
+  const toggleFavorite = async () => {
+    const user = auth.currentUser;
+    if (!game) return;
+
+    if (!user) {
+      alert("To add favorites, please log in.");
+      return;
+    }
+
+    const favRef = doc(db, "users", user.uid, "favorites", game.id.toString());
+
+    if (isFavorite) {
+      await deleteDoc(favRef);
+      setIsFavorite(false);
+    } else {
+      await setDoc(favRef, {
+        id: game.id,
+        name: game.name,
+        slug: game.slug,
+        background_image: game.background_image,
+        rating: game.rating,
+        genres: game.genres,
+      });
+      setIsFavorite(true);
+    }
+  };
+
+  const truncatedDescription =
+    game?.description_raw?.length && game.description_raw.length > 3500
+      ? game.description_raw.substring(0, 3500) + "..."
+      : game?.description_raw;
 
   if (loading) {
     return (
@@ -73,21 +160,12 @@ export default function GameDetailPage() {
           </svg>
           <p className="mt-4 text-xl font-bold text-red-500">Game not found.</p>
           <p className="mt-2 text-gray-400">
-            Sorry, we couldn&#39;t find the requested game.
+            Sorry, we couldn&apos;t find the requested game.
           </p>
         </div>
       </div>
     );
   }
-
-  const toggleFavorite = () => {
-    setIsFavorite(!isFavorite);
-  };
-
-  const truncatedDescription =
-    game.description_raw.length > 800
-      ? game.description_raw.substring(0, 800) + "..."
-      : game.description_raw;
 
   return (
     <div className="mt-10 bg-gradient-to-b from-zinc-900 to-zinc-950 text-gray-100 py-12 px-4 sm:px-6">
@@ -160,13 +238,13 @@ export default function GameDetailPage() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 auto-rows-min">
+        <div className="lg:col-span-3">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="bg-zinc-800/50 backdrop-blur-sm border border-zinc-700/50 rounded-3xl overflow-hidden shadow-xl"
+            className="lg:col-span-3 bg-zinc-800/50 backdrop-blur-sm border border-zinc-700/50 rounded-3xl overflow-hidden shadow-xl"
           >
             <div className="p-6 sm:p-8">
               <h2 className="text-2xl font-bold mb-4 text-white">
@@ -247,12 +325,100 @@ export default function GameDetailPage() {
             </div>
           </motion.div>
         </div>
-
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="lg:col-span-2 bg-zinc-800/50 backdrop-blur-sm border border-zinc-700/50 rounded-3xl overflow-hidden shadow-xl"
+        >
+          <div className="p-6 sm:p-8">
+            <h2 className="text-2xl font-bold text-white mb-4">User Reviews</h2>
+            {reviews.length > 0 ? (
+              <div className="max-h-150 overflow-y-auto space-y-4 pr-2 scrollbar-thin">
+                {reviews.map((review, index) => (
+                  <div
+                    key={index}
+                    className="bg-zinc-800/70 rounded-xl p-3 border border-zinc-800/70"
+                  >
+                    <div className="flex justify-between items-center mb-2">
+                      <h3 className="text-sm font-semibold text-purple-300">
+                        {review.user?.username || "Anonymous"}
+                      </h3>
+                      <span className="text-yellow-400 font-medium text-sm">
+                        {review.rating ? `${review.rating}/5` : "No rating"}
+                      </span>
+                    </div>
+                    <p className="text-gray-300 text-sm whitespace-pre-line">
+                      {review.text || "No content provided."}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-400">No reviews available.</p>
+            )}
+          </div>
+        </motion.div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
           className="bg-zinc-800/50 backdrop-blur-sm border border-zinc-700/50 rounded-3xl overflow-hidden shadow-xl h-fit"
+        >
+          <div className="p-6 sm:p-8">
+            <h2 className="text-2xl font-bold text-white mb-5">
+              System Requirements
+            </h2>
+
+            {game.platforms?.some(
+              (p) => p.requirements?.minimum || p.requirements?.recommended
+            ) ? (
+              <div className="space-y-6">
+                {game.platforms.map((platform, index) => {
+                  const req = platform.requirements;
+                  if (!req?.minimum && !req?.recommended) return null;
+
+                  return (
+                    <div
+                      key={index}
+                      className="bg-zinc-800/70 rounded-xl p-3 border border-zinc-800/70"
+                    >
+                      <h3 className="text-lg font-semibold text-purple-400 mb-2">
+                        {platform.platform.name}
+                      </h3>
+                      {req.minimum && (
+                        <p className="text-gray-300 text-sm whitespace-pre-line">
+                          <span className="font-semibold text-gray-200">
+                            Minimum:{" "}
+                          </span>
+                          {req.minimum}
+                        </p>
+                      )}
+                      {req.recommended && (
+                        <p className="text-gray-300 text-sm whitespace-pre-line mt-2">
+                          <span className="font-semibold text-gray-200">
+                            Recommended:{" "}
+                          </span>
+                          {req.recommended}
+                        </p>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-gray-400">
+                No system requirements available for this game.
+              </p>
+            )}
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="lg:col-span-3 bg-zinc-800/50 backdrop-blur-sm border border-zinc-700/50 rounded-3xl overflow-hidden shadow-xl h-fit"
         >
           <div className="p-6 sm:p-8">
             <div className="flex justify-between items-center mb-6">
@@ -280,19 +446,6 @@ export default function GameDetailPage() {
                   />
                 </svg>
                 Add to Cart
-              </button>
-
-              <button className="w-full bg-zinc-700/50 hover:bg-zinc-700 text-white font-bold py-4 px-6 rounded-xl transition-all duration-200 flex items-center justify-center">
-                <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                Add to Favorites
               </button>
             </div>
           </div>

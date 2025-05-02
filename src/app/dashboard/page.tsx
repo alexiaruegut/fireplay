@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { auth } from "@/lib/firebase";
+import { updateEmail, updatePassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
@@ -12,7 +13,6 @@ export default function DashboardPage() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<any>(null);
-
   const [birthday, setBirthday] = useState("");
   const [gender, setGender] = useState("");
   const [newEmail, setNewEmail] = useState("");
@@ -58,32 +58,46 @@ export default function DashboardPage() {
     }
 
     try {
-      if (newEmail && newEmail !== user.email) {
-        await user.updateEmail(newEmail);
-        await updateDoc(doc(db, "users", user.uid), { email: newEmail });
+      if (auth.currentUser) {
+        if (newEmail && newEmail !== auth.currentUser.email) {
+          await updateEmail(auth.currentUser, newEmail);
+          await updateDoc(doc(db, "users", auth.currentUser.uid), { email: newEmail });
+        }
+
+        if (newPassword) {
+          await updatePassword(auth.currentUser, newPassword);
+        }
+
+        await setDoc(doc(db, "users", auth.currentUser.uid), {
+          displayName: auth.currentUser.displayName,
+          email: newEmail || auth.currentUser.email,
+          birthday,
+          gender,
+        });
+
+        setSuccessMessage("Profile updated successfully.");
+        setTimeout(() => setSuccessMessage(""), 3000);
       }
-
-      if (newPassword) {
-        await user.updatePassword(newPassword);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error("Error saving profile:", error.message);
+        setError(error.message);
+      } else {
+        console.error("An unknown error occurred.");
+        setError("An unknown error occurred.");
       }
-
-      await setDoc(doc(db, "users", user.uid), {
-        displayName: user.displayName,
-        email: newEmail || user.email,
-        birthday,
-        gender,
-      });
-
-      setSuccessMessage("Profile updated successfully.");
-      setTimeout(() => setSuccessMessage(""), 3000);
-    } catch (error: any) {
-      console.error("Error saving profile:", error.message);
-      setError(error.message);
     }
   };
 
   if (loading) {
-    return null;
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-zinc-900">
+        <div className="animate-pulse flex flex-col items-center">
+          <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
+          <p className="mt-4 text-gray-400">Loading profile...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
