@@ -68,7 +68,7 @@ export default function LoginPage() {
           </button>
         </form>
 
-        {/* Link a Register */}
+        {/* link a register */}
         <div className="text-center text-sm text-gray-400 mt-6">
           Don&apos;t have an account?{" "}
           <Link href="/register" className="text-pink-400 hover:underline">

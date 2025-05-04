@@ -12,9 +12,9 @@ export default function HomePage() {
 
   return (
     <section className="flex flex-col flex-1 bg-zinc-900 text-gray-100 min-h-screen">
-      {/* Sección destacada con imagen de fondo */}
+      {/* seccion destacada */}
       <div className="relative h-[100vh] flex items-center justify-center overflow-hidden">
-        {/* Imagen de fondo */}
+        {/* bg img */}
         <div className="absolute inset-0 z-0">
           <div
             className="absolute inset-0 bg-cover bg-center"
@@ -84,7 +84,7 @@ export default function HomePage() {
         </motion.div>
       </div>
 
-      {/* ¿Qué es Fireplay? */}
+      {/* what is fireplay? */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={isLoaded ? { opacity: 1, y: 0 } : {}}
@@ -92,7 +92,6 @@ export default function HomePage() {
         className="max-w-4xl mx-auto my-16 p-4 text-center"
       >
         <div className="backdrop-blur-md bg-zinc-800/50 p-8 rounded-3xl border border-zinc-700/50 shadow-md relative overflow-hidden">
-          {/* Elementos decorativos de videojuegos */}
           <div className="absolute -top-6 -right-6 w-12 h-12 bg-purple-500/20 rounded-full opacity-50"></div>
           <div className="absolute -bottom-6 -left-6 w-12 h-12 bg-pink-500/20 rounded-full opacity-50"></div>
 
@@ -149,7 +148,7 @@ export default function HomePage() {
         </div>
       </motion.div>
 
-      {/* Cómo funciona */}
+      {/* how it works */}
       <div className="py-16 bg-zinc-800">
         <div className="max-w-5xl mx-auto text-center p-4">
           <motion.h2
@@ -232,7 +231,7 @@ export default function HomePage() {
                 transition={{ duration: 0.6, delay: step.delay }}
                 className={`backdrop-blur-sm ${step.bgColor} p-6 rounded-3xl border ${step.borderColor} shadow-md hover:shadow-lg transition-all duration-300 relative overflow-hidden group`}
               >
-                {/* Efecto de brillo al hacer hover */}
+                {/* efecto brillito del hover */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
 
                 <div
@@ -250,14 +249,13 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Llamada a la acción */}
+      {/* link a games */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={isLoaded ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.6, delay: 0.3 }}
         className="text-center py-16 px-4 bg-zinc-900 relative overflow-hidden"
       >
-        {/* Elementos decorativos de videojuegos */}
         <div className="absolute inset-0 z-0">
           <div
             className="absolute inset-0 bg-cover bg-center"

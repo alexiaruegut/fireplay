@@ -25,7 +25,7 @@ export default function RegisterPage() {
           displayName: name,
         });
       }
-      router.push("/login"); // Redirige a Login tras registrarse
+      router.push("/login"); 
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
@@ -82,7 +82,7 @@ export default function RegisterPage() {
           </button>
         </form>
 
-        {/* Link a Login */}
+        {/* link a login */}
         <div className="text-center text-sm text-gray-400 mt-6">
           Already have an account?{" "}
           <Link href="/login" className="text-pink-400 hover:underline">

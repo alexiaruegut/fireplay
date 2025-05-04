@@ -145,8 +145,8 @@ export default function GamesPage() {
         Explore Games
       </motion.h1>
 
-      {/* Filtro de género */}
-      <div className="flex justify-center mb-8">
+      {/* filtro género */}
+      <div className="flex justify-center mb-8 z-100">
         <Listbox value={selectedGenre} onChange={setSelectedGenre}>
           <div className="relative w-72">
             <Listbox.Button className="w-full bg-zinc-700 text-white rounded-lg py-2 px-4 text-left">
