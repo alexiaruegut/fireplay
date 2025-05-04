@@ -1,6 +1,7 @@
 # 🔥 Fireplay
 
 **Fireplay** is a blazing fast Progressive Web App (PWA) for discovering and exploring video games using the RAWG API. Built with Next.js 15, TailwindCSS, Firebase and fully installable on any device.
+Acces to the app with my Vercel: https://fireplay-one.vercel.app/
 
 ## 🚀 Features
 
