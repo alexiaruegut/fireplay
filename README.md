@@ -7,9 +7,9 @@
 * Game search with instant suggestions
 * User authentication via Firebase
 * Favorites and cart system
+* Game details with revies, requirements and others
 * Responsive UI with mobile dropdowns
 * Fully installable PWA (Progressive Web App)
-* Game details with screenshots and reviews
 
 ## 🧩 Technologies Used
 
@@ -18,13 +18,14 @@
 * RAWG API
 * Firebase Auth
 * next-pwa
+* Firestore Database
 
 ## 📦 Installation Guide
 
 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/fireplay.git
+git clone https://github.com/your-username/fireplay.git](https://github.com/alexiaruegut/fireplay
 cd fireplay
 ```
 
@@ -32,18 +33,43 @@ cd fireplay
 
 ```bash
 npm install
+npm install firebase
+npm install framer-motion
+npm install react-intersection-observer
+npm isntall @headlessui/react
+npm install lodash
+npm install next-pwa
+npm install --save-dev @types/next-pwa
 ```
 
 ## 🔐 Environment Configuration
 
-Create a `.env` file in the root of the project with the following variables:
+To run Fireplay properly, you need to configure Firebase and the RAWG API. Follow these steps:
+1. Firebase Setup
+* Go to Firebase Console and create a new project.
+
+* Inside your project, click on "Add App" → select Web App → give it a name and register it.
+
+* Go to Authentication → Sign-in Method → Enable "Email/Password".
+
+* Go to Firestore Database → Create Database → Start in test mode (or production if needed).
+
+* Copy your Firebase config values (apiKey, authDomain, etc.).
+
+2. RAWG API Key
+* Sign up at rawg.io
+
+* Go to https://rawg.io/apidocs → generate your API key
 
 ```env
+# RAWG API
 NEXT_PUBLIC_RAWG_API_KEY=your_rawg_api_key
-NEXT_PUBLIC_FIREBASE_API_KEY=your_firebase_key
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_auth_domain
+
+# Firebase Configuration
+NEXT_PUBLIC_FIREBASE_API_KEY=your_firebase_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
 NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_bucket
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
 ```
@@ -89,5 +115,4 @@ npm run start
 /src/lib            → Firebase config
 .env                → Environment variables
 next.config.js      → Next + PWA configuration
-manifest.json       → Web App Manifest
 ```
