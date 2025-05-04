@@ -11,6 +11,7 @@ import {
 } from "firebase/firestore";
 import Link from "next/link";
 import { addDoc, Timestamp } from "firebase/firestore";
+import { User } from "firebase/auth";
 
 interface CartItem {
   id: number;
@@ -22,7 +23,7 @@ interface CartItem {
 
 export default function CartPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
 
@@ -161,6 +162,7 @@ export default function CartPage() {
               href={`/game/${item.slug}`}
               className="flex items-center space-x-4"
             >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={item.background_image}
                 alt={item.name}

@@ -34,7 +34,7 @@ export default function GamesPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<import("firebase/auth").User | null>(null);
   const [favorites, setFavorites] = useState<number[]>([]);
   const [cart, setCart] = useState<number[]>([]);
   const [showCartModal, setShowCartModal] = useState(false);

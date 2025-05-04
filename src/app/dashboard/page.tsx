@@ -22,14 +22,21 @@ import { db } from "@/lib/firebase";
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<import("firebase/auth").User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
   const [birthday, setBirthday] = useState("");
   const [gender, setGender] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [orders, setOrders] = useState<any[]>([]);
+  interface Order {
+    id: string;
+    date: { seconds: number };
+    total: number;
+    items: { name: string }[]; 
+  }
+
+  const [orders, setOrders] = useState<Order[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(true);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showReauthModal, setShowReauthModal] = useState(false);
@@ -144,10 +151,15 @@ export default function DashboardPage() {
 
       try {
         const snap = await getDocs(collection(db, "users", user.uid, "orders"));
-        const formatted = snap.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+        const formatted = snap.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            date: data.date || { seconds: 0 }, 
+            total: data.total || 0, 
+            items: data.items || [], 
+          };
+        });
         setOrders(formatted);
       } catch (error) {
         console.error("Error loading order history:", error);
@@ -321,7 +333,7 @@ export default function DashboardPage() {
                   </span>
                 </div>
                 <ul className="list-disc pl-5 text-gray-300 text-sm">
-                  {order.items.map((item: any, i: number) => (
+                  {order.items.map((item, i: number) => (
                     <li key={i}>{item.name}</li>
                   ))}
                 </ul>

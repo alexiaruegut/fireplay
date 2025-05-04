@@ -43,6 +43,7 @@ export default function GameDetailPage() {
   const [isFavorite, setIsFavorite] = useState(false);
   const [randomPrice, setRandomPrice] = useState<number | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
   const [reviewsLoading, setReviewsLoading] = useState(true);
   const [isInCart, setIsInCart] = useState(false);
   const [showCartModal, setShowCartModal] = useState(false);

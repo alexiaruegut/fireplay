@@ -4,20 +4,26 @@ import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { auth } from "@/lib/firebase";
-import { debounce } from "lodash";
 
 export default function Header() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<import("firebase/auth").User | null>(null);
   const router = useRouter();
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<any[]>([]);
+  interface Game {
+    id: number;
+    slug: string;
+    name: string;
+    background_image: string;
+  }
+
+  const [results, setResults] = useState<Game[]>([]);
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
   const [showDropdown, setShowDropdown] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const desktopDropdownRef = useRef<HTMLDivElement>(null);
   const mobileDropdownRef = useRef<HTMLDivElement>(null);
   const [isDesktopDropdownOpen, setIsDesktopDropdownOpen] = useState(false);
-const [isMobileDropdownOpen, setIsMobileDropdownOpen] = useState(false);
-
+  const [isMobileDropdownOpen, setIsMobileDropdownOpen] = useState(false);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -59,14 +65,14 @@ const [isMobileDropdownOpen, setIsMobileDropdownOpen] = useState(false);
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as Node;
-  
+
       if (
         desktopDropdownRef.current &&
         !desktopDropdownRef.current.contains(target)
       ) {
         setIsDesktopDropdownOpen(false);
       }
-  
+
       if (
         mobileDropdownRef.current &&
         !mobileDropdownRef.current.contains(target)
@@ -74,13 +80,12 @@ const [isMobileDropdownOpen, setIsMobileDropdownOpen] = useState(false);
         setIsMobileDropdownOpen(false);
       }
     };
-  
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-  
 
   return (
     <header className="fixed top-0 w-full z-50 transition-all duration-300 bg-zinc-900/50 backdrop-blur-md shadow-lg">
@@ -126,6 +131,7 @@ const [isMobileDropdownOpen, setIsMobileDropdownOpen] = useState(false);
                     setResults([]);
                   }}
                 >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={game.background_image}
                     alt={game.name}
@@ -385,6 +391,7 @@ const [isMobileDropdownOpen, setIsMobileDropdownOpen] = useState(false);
                           setIsDropdownOpen(false);
                         }}
                       >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={game.background_image}
                           alt={game.name}

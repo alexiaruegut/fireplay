@@ -5,6 +5,7 @@ import Link from "next/link";
 import { auth, db } from "@/lib/firebase";
 import { collection, doc, getDocs, deleteDoc, setDoc } from "firebase/firestore";
 import { motion } from "framer-motion";
+import { User } from "firebase/auth";
 
 interface FavGame {
   id: number;
@@ -16,7 +17,7 @@ interface FavGame {
 }
 
 export default function FavoritesPage() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [favs, setFavs] = useState<FavGame[]>([]);
   const [inCartIds, setInCartIds] = useState<number[]>([]);
