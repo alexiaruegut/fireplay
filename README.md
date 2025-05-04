@@ -1,9 +1,10 @@
-# 🔥 Fireplay
+# Fireplay
 
 **Fireplay** is a blazing fast Progressive Web App (PWA) for discovering and exploring video games using the RAWG API. Built with Next.js 15, TailwindCSS, Firebase and fully installable on any device.
-Acces to the app with my Vercel: https://fireplay-one.vercel.app/
 
-## 🚀 Features
+## https://fireplay-one.vercel.app/
+
+## Features
 
 * Game search with instant suggestions
 * User authentication via Firebase
@@ -12,7 +13,7 @@ Acces to the app with my Vercel: https://fireplay-one.vercel.app/
 * Responsive UI with mobile dropdowns
 * Fully installable PWA (Progressive Web App)
 
-## 🧩 Technologies Used
+## Technologies Used
 
 * Next.js 15
 * TailwindCSS
@@ -21,7 +22,7 @@ Acces to the app with my Vercel: https://fireplay-one.vercel.app/
 * next-pwa
 * Firestore Database
 
-## 📦 Installation Guide
+## Installation Guide
 
 1. Clone the repository
 
@@ -43,7 +44,7 @@ npm install next-pwa
 npm install --save-dev @types/next-pwa
 ```
 
-## 🔐 Environment Configuration
+## Environment Configuration
 
 To run Fireplay properly, you need to configure Firebase and the RAWG API. Follow these steps:
 1. Firebase Setup
@@ -77,7 +78,7 @@ NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
 
 ⚠️ Make sure your Firebase project has **Email/Password authentication** enabled.
 
-## 📲 Installable as a PWA
+## Installable as a PWA
 
 Fireplay can be installed as an app on your device:
 
@@ -92,7 +93,7 @@ npm run start
 3. When prompted, click **"Install"**
 4. Alternatively, click the **install icon** in the browser address bar (on Chrome)
 
-## 🧪 Development
+## Development
 
 To run in development mode:
 
@@ -107,7 +108,7 @@ npm run build
 npm run start
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 /public             → Static files (manifest, icons)
