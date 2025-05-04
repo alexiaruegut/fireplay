@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { auth, db } from "@/lib/firebase";
 import { doc, getDoc, setDoc, deleteDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
+import Link from "next/link";
 
 interface GameDetail {
   id: number;
@@ -43,6 +44,9 @@ export default function GameDetailPage() {
   const [randomPrice, setRandomPrice] = useState<number | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [reviewsLoading, setReviewsLoading] = useState(true);
+  const [isInCart, setIsInCart] = useState(false);
+  const [showCartModal, setShowCartModal] = useState(false);
+  const [showFavModal, setShowFavModal] = useState(false);
 
   useEffect(() => {
     const fetchGameDetail = async () => {
@@ -67,6 +71,16 @@ export default function GameDetailPage() {
             );
             const favSnap = await getDoc(favRef);
             setIsFavorite(favSnap.exists());
+
+            const cartRef = doc(
+              db,
+              "users",
+              user.uid,
+              "cart",
+              data.id.toString()
+            );
+            const cartSnap = await getDoc(cartRef);
+            setIsInCart(cartSnap.exists());
           }
         });
       } catch (error) {
@@ -102,7 +116,7 @@ export default function GameDetailPage() {
     if (!game) return;
 
     if (!user) {
-      alert("To add favorites, please log in.");
+      setShowFavModal(true);
       return;
     }
 
@@ -121,6 +135,32 @@ export default function GameDetailPage() {
         genres: game.genres,
       });
       setIsFavorite(true);
+    }
+  };
+
+  const toggleCart = async () => {
+    const user = auth.currentUser;
+    if (!game || !randomPrice) return;
+
+    if (!user) {
+      setShowCartModal(true);
+      return;
+    }
+
+    const cartRef = doc(db, "users", user.uid, "cart", game.id.toString());
+
+    if (isInCart) {
+      await deleteDoc(cartRef);
+      setIsInCart(false);
+    } else {
+      await setDoc(cartRef, {
+        id: game.id,
+        name: game.name,
+        slug: game.slug,
+        background_image: game.background_image,
+        price: randomPrice,
+      });
+      setIsInCart(true);
     }
   };
 
@@ -334,7 +374,7 @@ export default function GameDetailPage() {
           <div className="p-6 sm:p-8">
             <h2 className="text-2xl font-bold text-white mb-4">User Reviews</h2>
             {reviews.length > 0 ? (
-              <div className="max-h-150 overflow-y-auto space-y-4 pr-2 scrollbar-thin">
+              <div className="max-h-200 overflow-y-auto space-y-4 pr-2 scrollbar-thin">
                 {reviews.map((review, index) => (
                   <div
                     key={index}
@@ -373,7 +413,7 @@ export default function GameDetailPage() {
             {game.platforms?.some(
               (p) => p.requirements?.minimum || p.requirements?.recommended
             ) ? (
-              <div className="space-y-6">
+              <div className="space-y-6 max-h-200 overflow-y-auto space-y-4 pr-2 scrollbar-thin">
                 {game.platforms.map((platform, index) => {
                   const req = platform.requirements;
                   if (!req?.minimum && !req?.recommended) return null;
@@ -435,7 +475,10 @@ export default function GameDetailPage() {
             </div>
 
             <div className="space-y-4">
-              <button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-4 px-6 rounded-xl transition-all duration-200 flex items-center justify-center">
+              <button
+                onClick={toggleCart}
+                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-4 px-6 rounded-xl transition-all duration-200 flex items-center justify-center"
+              >
                 <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none">
                   <path
                     d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.70711 15.2929C4.07714 15.9229 4.52331 17 5.41421 17H17M17 17C15.8954 17 15 17.8954 15 19C15 20.1046 15.8954 21 17 21C18.1046 21 19 20.1046 19 19C19 17.8954 18.1046 17 17 17ZM9 19C9 20.1046 8.10457 21 7 21C5.89543 21 5 20.1046 5 19C5 17.8954 5.89543 17 7 17C8.10457 17 9 17.8954 9 19Z"
@@ -445,11 +488,64 @@ export default function GameDetailPage() {
                     strokeLinejoin="round"
                   />
                 </svg>
-                Add to Cart
+                {isInCart ? "Remove from Cart" : "Add to Cart"}
               </button>
             </div>
           </div>
         </motion.div>
+        {showCartModal && (
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+            <div className="relative rounded-2xl p-[2px] bg-gradient-to-r from-purple-600 to-pink-600 max-w-md w-full shadow-xl">
+              <div className="bg-zinc-900 text-white p-8 rounded-[14px] text-center">
+                <h2 className="text-2xl font-bold mb-4">Login Required</h2>
+                <p className="text-gray-300 mb-6">
+                  To add a game to your cart, please log in.
+                </p>
+                <div className="flex justify-center gap-4">
+                  <button
+                    onClick={() => setShowCartModal(false)}
+                    className="px-4 py-2 bg-zinc-700 rounded-full hover:bg-zinc-600"
+                  >
+                    Close
+                  </button>
+                  <Link
+                    href="/login"
+                    className="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full hover:bg-purple-700 transition cursor-pointer hover:from-purple-700 hover:to-pink-700"
+                  >
+                    Go to Login
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {showFavModal && (
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+            <div className="relative rounded-2xl p-[2px] bg-gradient-to-r from-purple-600 to-pink-600 max-w-md w-full shadow-xl">
+              <div className="bg-zinc-900 text-white p-8 rounded-[14px] text-center">
+                <h2 className="text-2xl font-bold mb-4">Login Required</h2>
+                <p className="text-gray-300 mb-6">
+                  To add a game to your favorites, please log in.
+                </p>
+                <div className="flex justify-center gap-4">
+                  <button
+                    onClick={() => setShowFavModal(false)}
+                    className="px-4 py-2 bg-zinc-700 rounded-full hover:bg-zinc-600"
+                  >
+                    Close
+                  </button>
+                  <Link
+                    href="/login"
+                    className="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full hover:bg-purple-700 transition cursor-pointer hover:from-purple-700 hover:to-pink-700"
+                  >
+                    Go to Login
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

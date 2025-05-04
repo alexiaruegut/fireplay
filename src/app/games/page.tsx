@@ -34,9 +34,12 @@ export default function GamesPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
-
   const [user, setUser] = useState<any>(null);
   const [favorites, setFavorites] = useState<number[]>([]);
+  const [cart, setCart] = useState<number[]>([]);
+  const [showCartModal, setShowCartModal] = useState(false);
+  const [showFavModal, setShowFavModal] = useState(false);
+
   const pageSize = 20;
 
   useEffect(() => {
@@ -45,6 +48,8 @@ export default function GamesPage() {
       if (u) {
         const snap = await getDocs(collection(db, "users", u.uid, "favorites"));
         setFavorites(snap.docs.map((d) => parseInt(d.id)));
+        const cartSnap = await getDocs(collection(db, "users", u.uid, "cart"));
+        setCart(cartSnap.docs.map((d) => parseInt(d.id)));
       } else {
         setFavorites([]);
       }
@@ -79,7 +84,7 @@ export default function GamesPage() {
 
   const toggleFavorite = async (game: Game) => {
     if (!user) {
-      alert("To add favorites, please log in.");
+      setShowFavModal(true);
       return;
     }
 
@@ -98,6 +103,30 @@ export default function GamesPage() {
         slug: game.slug,
       });
       setFavorites((prev) => [...prev, game.id]);
+    }
+  };
+
+  const toggleCart = async (game: Game) => {
+    if (!user) {
+      setShowCartModal(true);
+      return;
+    }
+
+    const ref = doc(db, "users", user.uid, "cart", game.id.toString());
+
+    if (cart.includes(game.id)) {
+      await deleteDoc(ref);
+      setCart((prev) => prev.filter((id) => id !== game.id));
+    } else {
+      const randomPrice = Math.floor(Math.random() * (80 - 30 + 1)) + 30;
+      await setDoc(ref, {
+        id: game.id,
+        name: game.name,
+        slug: game.slug,
+        background_image: game.background_image,
+        price: randomPrice,
+      });
+      setCart((prev) => [...prev, game.id]);
     }
   };
 
@@ -145,12 +174,12 @@ export default function GamesPage() {
       </div>
 
       {loading ? (
-            <div className="flex items-center justify-center bg-zinc-900">
-              <div className="animate-pulse flex flex-col items-center">
-                <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
-                <p className="mt-4 text-gray-400">Loading games...</p>
-              </div>
-            </div>
+        <div className="flex items-center justify-center bg-zinc-900">
+          <div className="animate-pulse flex flex-col items-center">
+            <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
+            <p className="mt-4 text-gray-400">Loading games...</p>
+          </div>
+        </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-8">
           {games.map((game) => (
@@ -161,12 +190,11 @@ export default function GamesPage() {
               className="relative overflow-hidden rounded-3xl shadow-lg bg-zinc-800/50 border border-zinc-700/50 hover:scale-105 transition-transform duration-300 flex flex-col"
             >
               {/* imagen */}
-              <Link legacyBehavior href={`/game/${game.slug}`}>
-                <a
-                  className="h-48 bg-cover bg-center"
-                  style={{ backgroundImage: `url(${game.background_image})` }}
-                />
-              </Link>
+              <Link
+                href={`/game/${game.slug}`}
+                className="h-48 bg-cover bg-center block"
+                style={{ backgroundImage: `url(${game.background_image})` }}
+              />
 
               {/* contenido */}
               <div className="p-4 flex flex-col flex-1">
@@ -223,17 +251,54 @@ export default function GamesPage() {
                     ))}
                   </div>
                   <div className="w-10 h-10 flex items-center justify-center rounded-full cursor-pointer hover:bg-zinc-700/50">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
+                    <button
+                      onClick={() => toggleCart(game)}
+                      className="w-10 h-10 flex items-center justify-center rounded-full cursor-pointer hover:bg-zinc-700/50"
                     >
-                      <path
-                        fill="currentColor"
-                        d="M16 18a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2m0 1a1 1 0 0 0-1 1a1 1 0 0 0 1 1a1 1 0 0 0 1-1a1 1 0 0 0-1-1m-9-1a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2m0 1a1 1 0 0 0-1 1a1 1 0 0 0 1 1a1 1 0 0 0 1-1a1 1 0 0 0-1-1M18 6H4.27l2.55 6H15c.33 0 .62-.16.8-.4l3-4c.13-.17.2-.38.2-.6a1 1 0 0 0-1-1m-3 7H6.87l-.77 1.56L6 15a1 1 0 0 0 1 1h11v1H7a2 2 0 0 1-2-2a2 2 0 0 1 .25-.97l.72-1.47L2.34 4H1V3h2l.85 2H18a2 2 0 0 1 2 2c0 .5-.17.92-.45 1.26l-2.91 3.89c-.36.51-.96.85-1.64.85"
-                      />
-                    </svg>
+                      {cart.includes(game.id) ? (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-7 w-7"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            fill="currentColor"
+                            fillRule="evenodd"
+                            d="M9.5 19.5a1 1 0 1 0 0-2a1 1 0 0 0 0 2m0 1a2 2 0 1 0 0-4a2 2 0 0 0 0 4m7-1a1 1 0 1 0 0-2a1 1 0 0 0 0 2m0 1a2 2 0 1 0 0-4a2 2 0 0 0 0 4M3 4a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .476.348L9.37 14.5H17a.5.5 0 0 1 0 1H9.004a.5.5 0 0 1-.476-.348L5.135 4.5H3.5A.5.5 0 0 1 3 4"
+                            clipRule="evenodd"
+                          />
+                          <path
+                            fill="currentColor"
+                            d="M8.5 13L6 6h13.337a.5.5 0 0 1 .48.637l-1.713 6a.5.5 0 0 1-.481.363z"
+                          />
+                        </svg>
+                      ) : (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-7 w-7"
+                          viewBox="0 0 24 24"
+                        >
+                          <g
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="1.2"
+                          >
+                            <circle cx="10" cy="19" r="1.5" />
+                            <circle cx="17" cy="19" r="1.5" />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M3.5 4h2l3.504 11H17"
+                            />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M8.224 12.5L6.3 6.5h12.507a.5.5 0 0 1 .475.658l-1.667 5a.5.5 0 0 1-.474.342z"
+                            />
+                          </g>
+                        </svg>
+                      )}
+                    </button>
                   </div>
                 </div>
               </div>
@@ -294,6 +359,59 @@ export default function GamesPage() {
           </button>
         )}
       </div>
+      {showCartModal && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+          <div className="relative rounded-2xl p-[2px] bg-gradient-to-r from-purple-600 to-pink-600 max-w-md w-full shadow-xl">
+            <div className="bg-zinc-900 text-white p-8 rounded-[14px] text-center">
+              <h2 className="text-2xl font-bold mb-4">Login Required</h2>
+              <p className="text-gray-300 mb-6">
+                To add a game to your cart, please log in.
+              </p>
+              <div className="flex justify-center gap-4">
+                <button
+                  onClick={() => setShowCartModal(false)}
+                  className="px-4 py-2 bg-zinc-700 rounded-full hover:bg-zinc-600"
+                >
+                  Close
+                </button>
+                <Link
+                  href="/login"
+                  className="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full hover:bg-purple-700 transition cursor-pointer hover:from-purple-700 hover:to-pink-700"
+                >
+                  Go to Login
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showFavModal && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+          <div className="relative rounded-2xl p-[2px] bg-gradient-to-r from-purple-600 to-pink-600 max-w-md w-full shadow-xl">
+            <div className="bg-zinc-900 text-white p-8 rounded-[14px] text-center">
+              <h2 className="text-2xl font-bold mb-4">Login Required</h2>
+              <p className="text-gray-300 mb-6">
+                To add a game to your favorites, please log in.
+              </p>
+              <div className="flex justify-center gap-4">
+                <button
+                  onClick={() => setShowFavModal(false)}
+                  className="px-4 py-2 bg-zinc-700 rounded-full hover:bg-zinc-600"
+                >
+                  Close
+                </button>
+                <Link
+                  href="/login"
+                  className="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full hover:bg-purple-700 transition cursor-pointer hover:from-purple-700 hover:to-pink-700"
+                >
+                  Go to Login
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
