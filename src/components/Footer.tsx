@@ -104,6 +104,22 @@ export default function Footer() {
                   Profile
                 </a>
               </li>
+              <li>
+                <a
+                  href="/favorites"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  Favorites
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/cart"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  Cart
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -132,7 +148,7 @@ export default function Footer() {
           <div>
             <h3 className="text-white font-medium mb-3">Contact</h3>
             <ul className="space-y-2">
-              <li className="text-gray-400">info@fireplay.com</li>
+              <li className="text-gray-400">alexiaruedagu@gmail.com</li>
               <li className="text-gray-400">+34 222 222 222</li>
               <li className="text-gray-400">Barcelona, Spain</li>
             </ul>
