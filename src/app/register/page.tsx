@@ -36,7 +36,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <section className="flex flex-1 items-center justify-center bg-zinc-900 text-gray-100 p-8">
+    <section className="flex flex-1 items-center justify-center bg-zinc-900 text-gray-100 p-8 mt-10">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

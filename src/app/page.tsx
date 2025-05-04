@@ -107,7 +107,7 @@ export default function HomePage() {
             </p>
             <div className="flex justify-center gap-4">
               <a
-                href="/info"
+                href="/about"
                 className="text-purple-400 hover:text-purple-300 transition-colors flex items-center"
               >
                 <span>More Information</span>
